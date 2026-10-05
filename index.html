@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abakus & Soroban Labor — Walter (@xallace)</title>
+  <meta name="description" content="Interaktive Modernisierung des klassischen Walter Fendt Abakus-Applets. Bi-quinäres Rechnen, Soroban, Suanpan, Römische Zahlen & Web Audio.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-wood">
+
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <a href="../xallace.github.io/index.html" class="back-link" title="Zurück zum Portfolio">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <div>
+          <h1 class="app-title" data-i18n="title">Abakus & Soroban Labor</h1>
+          <p class="app-subtitle" data-i18n="subtitle">Interaktives bi-quinäres Rechenbrett mit Live-Kinematik & Akustik</p>
+        </div>
+      </div>
+
+      <div class="header-tools">
+        <button id="btn-sound-toggle" class="tool-btn" title="Sound ein/ausschalten">
+          <svg class="sound-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+          <svg class="sound-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+        </button>
+
+        <button id="lang-btn" class="tool-btn" title="Sprache wechseln">DE</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Tribute Banner -->
+      <div class="tribute-badge">
+        <span class="badge-icon">🏛️</span>
+        <span data-i18n="tribute">Modernisierung & didaktische Hommage an Walter Fendt (2023)</span>
+      </div>
+
+      <!-- Quiz Challenge Banner (Hidden by default) -->
+      <div id="quiz-banner" class="quiz-banner hidden"></div>
+
+      <!-- Abacus Canvas Workstation -->
+      <div class="canvas-card">
+        <canvas id="abacus-canvas"></canvas>
+      </div>
+
+      <!-- Live Mathematical Breakdown Card -->
+      <div class="breakdown-card">
+        <div class="breakdown-label">
+          <span class="pulse-indicator"></span>
+          <span data-i18n="placeValueTitle">Stellenwert-Zerlegung:</span>
+        </div>
+        <div id="place-value-text" class="breakdown-formula">0</div>
+      </div>
+
+      <!-- Controls Dashboard -->
+      <div class="dashboard-grid">
+
+        <!-- Numeric Inputs & Conversions -->
+        <div class="dash-card">
+          <h3 class="card-heading">Zahleneingabe & Konvertierung</h3>
+          
+          <div class="form-group">
+            <label for="dec-input" data-i18n="decimalInput">Dezimalzahl:</label>
+            <div class="input-wrapper">
+              <input type="text" id="dec-input" placeholder="Zahl eingeben + Enter" autocomplete="off">
+              <span class="input-hint">Basis 10</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="rom-input" data-i18n="romanInput">Römische Zahl:</label>
+            <div class="input-wrapper">
+              <input type="text" id="rom-input" placeholder="z. B. MMXXVI + Enter" autocomplete="off">
+              <span class="input-hint">I, V, X, L, C, D, M</span>
+            </div>
+          </div>
+
+          <div class="quick-step-row">
+            <button class="action-btn" id="btn-clear" data-i18n="clearBtn">Abakus leeren</button>
+            <button class="action-btn secondary" id="btn-random" data-i18n="randomBtn">Zufallszahl</button>
+            <button class="action-btn accent" id="btn-quiz" data-i18n="quizBtn">Trainer starten</button>
+          </div>
+        </div>
+
+        <!-- Abacus Configuration -->
+        <div class="dash-card">
+          <h3 class="card-heading">Modell & Mechanik</h3>
+
+          <div class="form-group">
+            <label for="type-select" data-i18n="abacusType">Historischer Typ:</label>
+            <select id="type-select">
+              <option value="soroban" selected>Soroban (Japanisch, 4+1 Perlen)</option>
+              <option value="suanpan">Suanpan (Chinesisch, 5+2 Perlen)</option>
+              <option value="roman">Römischer Handabakus (4+1 Calculi)</option>
+              <option value="schoty">Russischer Schoty (10 Perlen je Draht)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="rod-select" data-i18n="rods">Anzahl der Stellen (Drähte):</label>
+            <select id="rod-select">
+              <option value="3">3 Stellen (bis 999)</option>
+              <option value="4">4 Stellen (bis 9.999)</option>
+              <option value="5">5 Stellen (bis 99.999)</option>
+              <option value="6" selected>6 Stellen (bis 999.999)</option>
+              <option value="7">7 Stellen (bis 9.999.999)</option>
+              <option value="8">8 Stellen (bis 99.999.999)</option>
+              <option value="10">10 Stellen (Milliardenskala)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="theme-select" data-i18n="theme">Optik & Haptik:</label>
+            <select id="theme-select">
+              <option value="wood" selected>Artisan Wood (Mahagoni & Bambus)</option>
+              <option value="slate">Cyber Slate (Dark Mode High-Contrast)</option>
+              <option value="classic">Walter Fendt Original (Rot & Blau)</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Pedagogical & Historical Foundations -->
+      <section class="info-section">
+        <h2 class="info-title">Mathematische & Historische Grundlagen</h2>
+        
+        <div class="info-grid">
+          <div class="info-box">
+            <h4>Das Bi-quinäre Prinzip</h4>
+            <p>
+              Der Soroban nutzt ein <strong>bi-quinäres Zahlensystem</strong> (Basis 2 und Basis 5). 
+              Statt 9 Einzelperlen pro Draht reichen <strong>1 obere Perle</strong> (Wert 5) und 
+              <strong>4 untere Perlen</strong> (Wert 1). Dadurch wird die visuelle Erfassung (*Subitizing*) 
+              dramatisch beschleunigt: Das menschliche Auge erfasst bis zu 4 Objekte intuitiv auf einen Blick, 
+              ohne abzählen zu müssen.
+            </p>
+          </div>
+
+          <div class="info-box">
+            <h4>Vom Rechenstein zur UNESCO-Welterbe</h4>
+            <p>
+              Das Wort <em>Kalkulieren</em> stammt vom lateinischen <em>calculus</em> (Kieselstein), den römische 
+              Kaufleute in die Rillen ihres Handabakus legten. Die chinesische Variante (<em>Suanpan</em>) wurde 2013 
+              von der <strong>UNESCO</strong> als immaterielles Kulturerbe der Menschheit anerkannt. 
+              In Japan wird das mentale Rechnen am imaginären Soroban (*Anzan*) bis heute in Schulen trainiert.
+            </p>
+          </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="comparison-card">
+          <h3>Direkter Vergleich: Walter Fendt (2023) vs. Modernisierung (2026)</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Eigenschaft</th>
+                  <th>Walter Fendt Original (2023)</th>
+                  <th>Modernisiertes Labor (2026)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Auflösung & Skalierung</strong></td>
+                  <td>Feste 500 × 400 px</td>
+                  <td>Vollständig responsiv mit Retina / High-DPI Canvas Rendering</td>
+                </tr>
+                <tr>
+                  <td><strong>Akustik & Haptik</strong></td>
+                  <td>Lautlos</td>
+                  <td>Prozedurales Web Audio (taktiles Holzklacken & Kaskaden-Rasseln)</td>
+                </tr>
+                <tr>
+                  <td><strong>Abakus-Varianten</strong></td>
+                  <td>Ausschließlich 4+1 Soroban</td>
+                  <td>Soroban (4+1), Suanpan (5+2), Römischer Handabakus & Schoty (10)</td>
+                </tr>
+                <tr>
+                  <td><strong>Didaktische Analyse</strong></td>
+                  <td>Reine Ziffernausgabe</td>
+                  <td>Echtzeit-Stellenwertzerlegung ($d \times 10^i$) & mathematische Formeln</td>
+                </tr>
+                <tr>
+                  <td><strong>Interaktivität & Training</strong></td>
+                  <td>Reine Zahlenanzeige</td>
+                  <td>Integrierter Quiz-Trainer mit Zielwert-Überprüfung</td>
+                </tr>
+                <tr>
+                  <td><strong>Ästhetik</strong></td>
+                  <td>Gelber Hintergrund / Primärfarben</td>
+                  <td>Bi-konische 3D-Perlen, Mahagoni-Finish, Slate-Modus & Fendt-Klassik</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <div class="container footer-content">
+      <p>
+        Entwickelt von <strong>Walter (@xallace)</strong> als Teil des computationalen Ingenieur-Portfolios.  
+        Originalentwurf von Studiendirektor <strong>Walter Fendt</strong> (1997–2023).
+      </p>
+      <div class="footer-links">
+        <a href="https://github.com/xallace" target="_blank" rel="noopener noreferrer">GitHub (@xallace)</a>
+        <span>·</span>
+        <a href="https://www.walter-fendt.de/html5/mde/abacus_de.htm" target="_blank" rel="noopener noreferrer">Original Fendt Applet</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="audio.js"></script>
+  <script src="abacus-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
