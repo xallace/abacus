@@ -56,6 +56,36 @@ body.theme-classic {
   --input-border: #d4d4d8;
 }
 
+body.is-embedded {
+  background: transparent !important;
+  min-height: auto !important;
+  overflow-x: hidden;
+}
+
+body.is-embedded .app-header,
+body.is-embedded .tribute-badge,
+body.is-embedded .info-section,
+body.is-embedded .app-footer {
+  display: none !important;
+}
+
+body.is-embedded .main-content {
+  padding: 0 !important;
+}
+
+body.is-embedded .container {
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+
+body.is-embedded .canvas-card {
+  margin-bottom: 0.8rem;
+}
+
+body.is-embedded .dashboard-grid {
+  margin-bottom: 0.5rem;
+}
+
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;

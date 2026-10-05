@@ -122,6 +122,18 @@
   };
 
   function init() {
+    // Check if embedded in iframe
+    if (window.self !== window.top || window.location.search.includes('embed') || window.location.hash.includes('embed')) {
+      document.body.classList.add('is-embedded');
+      // If embedded on dark landing page, default to slate or wood
+      if (window.location.search.includes('theme=slate')) {
+        theme = 'slate';
+        document.body.className = 'theme-slate is-embedded';
+        const ts = document.getElementById('theme-select');
+        if (ts) ts.value = 'slate';
+      }
+    }
+
     engine = new AbacusEngine(6, 'soroban');
     audio = new AbacusAudio();
 
